@@ -28,6 +28,8 @@ public:
     void insert_first(Node* node);
     bool is_empty();
     void push_back(T data);
+    T get_head();
+    T get_tail();
     T at(size_t pos);
     size_t size();
     T operator[](size_t pos);
@@ -77,7 +79,7 @@ size_t LinkedList<T>::size(){
 
 template <typename T>
 T LinkedList<T>::at(size_t pos) {
-    if(pos > size()) throw std::out_of_range("Index out of bounds");
+    if(pos >= size()) throw std::out_of_range("Index out of bounds");
     LinkedList<T>::Node* iterator = head;
     while (pos){
         iterator = iterator->next;
@@ -89,6 +91,16 @@ T LinkedList<T>::at(size_t pos) {
 template <typename T>
 T LinkedList<T>::operator[](size_t pos) {
     return at(pos);
+}
+
+template <typename T>
+T LinkedList<T>::get_head() {
+    return head->data;
+}
+
+template <typename T>
+T LinkedList<T>::get_tail() {
+    return tail->data;
 }
 
 #endif //TEMPLATED_ALGORITHMS_LINKEDLIST_H

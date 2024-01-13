@@ -6,6 +6,6 @@
 
 int main(){
     LinkedList myList = {1,2,3,4,5};
-    int result = myList[3];
+    int result = myList[5];
     std::cout<<result;
 }
