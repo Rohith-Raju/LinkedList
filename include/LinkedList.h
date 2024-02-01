@@ -20,6 +20,14 @@ private:
         };
     };
     size_t size_counter = 0;
+    LinkedList<T>::Node* middle(LinkedList<T>*list);
+    LinkedList<T> split(LinkedList<T>::Node*);
+    template<class function>
+            LinkedList<T> merge(LinkedList<T> list, function &&func);
+
+    template<class function>
+            LinkedList<T>::Node* merge_sort(Node* left, Node* right, function &&func);
+
 public:
     Node* head;
     Node* tail;
@@ -28,6 +36,9 @@ public:
     void insert_first(Node* node);
     bool is_empty();
     void push_back(T data);
+    LinkedList<T>& sort();
+    template<class function>
+            LinkedList<T>& sort(function&& func);
     T get_head();
     T get_tail();
     T at(size_t pos);
@@ -101,6 +112,49 @@ T LinkedList<T>::get_head() {
 template <typename T>
 T LinkedList<T>::get_tail() {
     return tail->data;
+}
+template <typename T>
+LinkedList<T>&  LinkedList<T>::sort() {
+sort([](T leftVal, T rightVal){ return leftVal < rightVal;});
+}
+
+template <typename T>
+template <class function>
+LinkedList<T>& LinkedList<T>::sort(function&& func) {
+    if(!this || !this->next) return this;
+    LinkedList<T> right_list  = split(middle(head));
+    sort(func);
+    right_list.sort(func);
+}
+
+template <typename T>
+template <class function>
+LinkedList<T>::Node*
+LinkedList<T>::merge_sort(Node* left, Node* right, function &&func) {
+    //todo: write the comparrison scneario
+}
+
+
+template <typename T>
+LinkedList<T>::Node* LinkedList<T>::middle(LinkedList<T>* list) {
+    LinkedList<T>::Node* slow = list->head;
+    LinkedList<T>::Node* fast = list->head;
+    while(fast->next && fast->next->next){
+        slow = slow->next;
+        fast = fast->next;
+    }
+    return slow;
+}
+
+template <typename T>
+LinkedList<T> LinkedList<T>::split(LinkedList<T>::Node * node) {
+    LinkedList<T> temporary;
+    if(node != nullptr){
+        temporary.head = node->next;
+        temporary.tail = temporary.head != nullptr ? tail : temporary.head;
+    }
+    tail = node;
+    tail->next = nullptr;
 }
 
 #endif //TEMPLATED_ALGORITHMS_LINKEDLIST_H
