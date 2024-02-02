@@ -20,10 +20,10 @@ private:
         };
     };
     size_t size_counter = 0;
-    LinkedList<T>::Node* middle(LinkedList<T>*list);
+    LinkedList<T>::Node* middle(LinkedList<T>::Node* head);
     LinkedList<T> split(LinkedList<T>::Node*);
     template<class function>
-            LinkedList<T> merge(LinkedList<T> list, function &&func);
+            LinkedList<T>& merge(LinkedList<T> list, function &&func);
 
     template<class function>
             LinkedList<T>::Node* merge_sort(Node* left, Node* right, function &&func);
@@ -115,30 +115,51 @@ T LinkedList<T>::get_tail() {
 }
 template <typename T>
 LinkedList<T>&  LinkedList<T>::sort() {
-sort([](T leftVal, T rightVal){ return leftVal < rightVal;});
+return sort([](T leftVal, T rightVal){ return leftVal < rightVal;});
 }
 
 template <typename T>
 template <class function>
 LinkedList<T>& LinkedList<T>::sort(function&& func) {
-    if(!this || !this->next) return this;
+    if(!head || !head->next) return *this;
     LinkedList<T> right_list  = split(middle(head));
     sort(func);
     right_list.sort(func);
+    return merge(right_list,func);
 }
+
+template <typename T>
+template <class function>
+LinkedList<T>&
+LinkedList<T>::merge(LinkedList<T> list, function &&func) {
+    head = merge_sort(head, list.head, func);
+    //set tail to the greatest of the two lists
+    if(!tail || (list.tail && func(tail->data,list.tail->data))){
+        tail = list.tail;
+    }
+    return *this;
+}
+
 
 template <typename T>
 template <class function>
 LinkedList<T>::Node*
 LinkedList<T>::merge_sort(Node* left, Node* right, function &&func) {
-    //todo: write the comparrison scneario
+    if(left == nullptr) return right;
+    if(right == nullptr) return left;
+    bool comp = func(left->data, right->data);
+    Node* head = comp ? left: right;
+    head->next = comp ? merge_sort(left->next, right, func):
+                 merge_sort(left,right->next,func);
+    return head;
 }
 
 
 template <typename T>
-LinkedList<T>::Node* LinkedList<T>::middle(LinkedList<T>* list) {
-    LinkedList<T>::Node* slow = list->head;
-    LinkedList<T>::Node* fast = list->head;
+LinkedList<T>::Node* LinkedList<T>::middle(LinkedList<T>::Node* head) {
+    if(head == nullptr || head->next == nullptr) return head;
+    LinkedList<T>::Node* fast = head;
+    LinkedList<T>::Node* slow = head;
     while(fast->next && fast->next->next){
         slow = slow->next;
         fast = fast->next;
@@ -152,9 +173,12 @@ LinkedList<T> LinkedList<T>::split(LinkedList<T>::Node * node) {
     if(node != nullptr){
         temporary.head = node->next;
         temporary.tail = temporary.head != nullptr ? tail : temporary.head;
+        tail = node;
+        tail->next = nullptr;
     }
-    tail = node;
-    tail->next = nullptr;
+    return temporary;
 }
+
+//todo: write clean up funcs
 
 #endif //TEMPLATED_ALGORITHMS_LINKEDLIST_H

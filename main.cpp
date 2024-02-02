@@ -5,7 +5,6 @@
 #include "iostream"
 
 int main(){
-    LinkedList myList = {1,2,3,4,5};
-    int result = myList[5];
-    std::cout<<result;
+    LinkedList myList = {3,2,1};
+    myList.sort();
 }
