@@ -5,6 +5,10 @@
 #include "iostream"
 
 int main(){
-    LinkedList myList = {3,2,1};
-    myList.sort();
+    {
+        LinkedList myList = {3, 2, 1};
+        myList.sort();
+        std::cout << myList.size();
+    }
+    std::cout<<"hello";
 }

@@ -2,13 +2,13 @@
 // Created by Rohith on 1/3/24.
 //
 
-#ifndef TEMPLATED_ALGORITHMS_LINKEDLIST_H
-#define TEMPLATED_ALGORITHMS_LINKEDLIST_H
+#ifndef CPPTEMPLATION_LINKEDLIST_H
+#define CPPTEMPLATION_LINKEDLIST_H
 
 #include <initializer_list>
 #include <stdexcept>
 
-template <typename T>
+template <class T>
 class LinkedList {
 private:
     struct Node{
@@ -27,23 +27,28 @@ private:
 
     template<class function>
             LinkedList<T>::Node* merge_sort(Node* left, Node* right, function &&func);
+    LinkedList<T>& deep_clean(Node*& list);
 
 public:
     Node* head;
     Node* tail;
+
     LinkedList();
     LinkedList(std::initializer_list<T>list);
+    ~LinkedList();
+
     void insert_first(Node* node);
     bool is_empty();
     void push_back(T data);
     LinkedList<T>& sort();
     template<class function>
             LinkedList<T>& sort(function&& func);
-    T get_head();
-    T get_tail();
-    T at(size_t pos);
+    bool delete_at(size_t pos);
+    T get_head_val();
+    T get_tail_val();
+    Node* at(size_t pos);
     size_t size();
-    T operator[](size_t pos);
+    Node* operator[](size_t pos);
 };
 
 template <typename T>
@@ -54,6 +59,23 @@ LinkedList<T>::LinkedList(std::initializer_list<T>list):LinkedList(){
     for(T element: list){
         push_back(element);
     }
+}
+
+template <typename T>
+LinkedList<T>::~LinkedList() {
+    deep_clean(head);
+    tail = nullptr;
+}
+
+template <typename T>
+LinkedList<T>& LinkedList<T>::deep_clean(Node*& list) {
+    if(list != tail){
+        deep_clean(list->next);
+    }
+    delete list;
+    list = nullptr;
+    this->size_counter--;
+    return *this;
 }
 
 template <typename T>
@@ -89,28 +111,67 @@ size_t LinkedList<T>::size(){
 }
 
 template <typename T>
-T LinkedList<T>::at(size_t pos) {
+typename LinkedList<T>::Node*
+LinkedList<T>::at(size_t pos) {
     if(pos >= size()) throw std::out_of_range("Index out of bounds");
     LinkedList<T>::Node* iterator = head;
     while (pos){
         iterator = iterator->next;
         pos--;
     }
-    return iterator->data;
+    return iterator;
 }
 
 template <typename T>
-T LinkedList<T>::operator[](size_t pos) {
+typename LinkedList<T>::Node*
+LinkedList<T>::operator[](size_t pos) {
     return at(pos);
 }
 
 template <typename T>
-T LinkedList<T>::get_head() {
+bool LinkedList<T>::delete_at(size_t pos) {
+    if(pos >= size()){
+        throw std::out_of_range("Cannot delete. Index out of bounds");
+        return false;
+    }
+    if(pos == 0){
+        Node* temp = head;
+        head = head->next;
+        size_counter--;
+        delete temp;
+        return true;
+    }
+    //stop at previous
+    pos -= 1;
+    Node* list = head;
+    while (pos){
+    list = list->next;
+    pos--;
+    }
+    if(list->next == tail){
+        Node* temp = tail;
+        tail = list;
+        size_counter--;
+        delete temp;
+        return true;
+    }
+    else{
+        Node* temp = list->next;
+        list->next = list->next->next;
+        size_counter--;
+        temp->next = nullptr;
+        delete temp;
+        return true;
+    }
+}
+
+template <typename T>
+T LinkedList<T>::get_head_val() {
     return head->data;
 }
 
 template <typename T>
-T LinkedList<T>::get_tail() {
+T LinkedList<T>::get_tail_val() {
     return tail->data;
 }
 template <typename T>
@@ -143,7 +204,7 @@ LinkedList<T>::merge(LinkedList<T> list, function &&func) {
 
 template <typename T>
 template <class function>
-LinkedList<T>::Node*
+typename LinkedList<T>::Node*
 LinkedList<T>::merge_sort(Node* left, Node* right, function &&func) {
     if(left == nullptr) return right;
     if(right == nullptr) return left;
@@ -156,7 +217,8 @@ LinkedList<T>::merge_sort(Node* left, Node* right, function &&func) {
 
 
 template <typename T>
-LinkedList<T>::Node* LinkedList<T>::middle(LinkedList<T>::Node* head) {
+typename LinkedList<T>::Node*
+LinkedList<T>::middle(LinkedList<T>::Node* head) {
     if(head == nullptr || head->next == nullptr) return head;
     LinkedList<T>::Node* fast = head;
     LinkedList<T>::Node* slow = head;
@@ -178,7 +240,4 @@ LinkedList<T> LinkedList<T>::split(LinkedList<T>::Node * node) {
     }
     return temporary;
 }
-
-//todo: write clean up funcs
-
-#endif //TEMPLATED_ALGORITHMS_LINKEDLIST_H
+#endif //CPPTEMPLATION_LINKEDLIST_H
