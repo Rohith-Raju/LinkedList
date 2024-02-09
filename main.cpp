@@ -10,5 +10,4 @@ int main(){
         myList.sort();
         std::cout << myList.size();
     }
-    std::cout<<"hello";
 }

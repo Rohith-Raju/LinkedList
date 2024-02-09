@@ -27,7 +27,8 @@ private:
 
     template<class function>
             LinkedList<T>::Node* merge_sort(Node* left, Node* right, function &&func);
-    LinkedList<T>& deep_clean(Node*& list);
+    void deep_clean(Node*& list);
+    LinkedList<T>& clean();
 
 public:
     Node* head;
@@ -63,19 +64,34 @@ LinkedList<T>::LinkedList(std::initializer_list<T>list):LinkedList(){
 
 template <typename T>
 LinkedList<T>::~LinkedList() {
-    deep_clean(head);
-    tail = nullptr;
+   //clean();
 }
 
 template <typename T>
-LinkedList<T>& LinkedList<T>::deep_clean(Node*& list) {
+LinkedList<T>& LinkedList<T>::clean(){
+    if(is_empty())
+    {
+        return *this;
+    }
+
+    // clear_list is a recursive function that deletes each node of the list
+    deep_clean(head);
+
+    tail = nullptr;
+
+    return *this;
+
+}
+
+template <typename T>
+void  LinkedList<T>::deep_clean(Node*& list) {
     if(list != tail){
         deep_clean(list->next);
     }
     delete list;
     list = nullptr;
     this->size_counter--;
-    return *this;
+    return;
 }
 
 template <typename T>

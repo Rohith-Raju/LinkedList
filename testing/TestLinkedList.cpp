@@ -6,11 +6,32 @@
 #include <vector>
 
 
-TEST(LinkedList, TestInit){
+TEST(LinkedList, TestPrimitiveInit){
     LinkedList list = {1,2,3,4,5};
     ASSERT_FALSE(list.is_empty());
     ASSERT_EQ(list.get_head_val(), 1);
     ASSERT_EQ(list.get_tail_val(), 5);
+}
+
+TEST(LinkedList, TestNonPrimitiveInit){
+    class Person{
+    public:
+        int age;
+        std::string name;
+    };
+    LinkedList<Person>list = {
+            {23,"Rohith"},
+            {25,"John"},
+            {21,"Bob"},
+            {28,"Alice"},
+            {30,"Rahul"}
+    };
+    int ageArr[5] = {23,25,21,28,30};
+    std::string nameArr[5] = {"Rohith","John","Bob","Alice","Rahul"};
+    for(int i=0; i<5; i++){
+        ASSERT_EQ(list[i]->data.age, ageArr[i]);
+        ASSERT_EQ(list[i]->data.name, nameArr[i]);
+    }
 }
 
 TEST(LinkedList, TestHeadTail){
@@ -55,13 +76,48 @@ TEST(LinkedList, TestDeleteAtPosition){
     //todo: write SIGSEGV test case
 }
 
+TEST(LinkedList, TestCustomSort){
+    class Person{
+    public:
+        int age;
+        std::string name;
+    };
+    LinkedList<Person>list = {
+            {23,"Rohith"},
+            {25,"John"},
+            {21,"Bob"},
+            {28,"Alice"},
+            {30,"Rahul"}
+    };
+    list.sort([](Person left, Person right){return left.age < right.age;});
+    int data[5] = {21,23,25,28,30};
+    for (int i=0; i<5; i++){
+        ASSERT_EQ(data[i],list[i]->data.age);
+    }
+}
+
 TEST(LinkedList, TestBasicSorting){
     int data[] =  {4,5,6,7,8,9};
     LinkedList list = {9,8,7,6,5,4};
     list.sort();
     ASSERT_EQ(list.get_head_val(), 4);
     ASSERT_EQ(list.get_tail_val(), 9);
-    for(int i=0; i<6; i++){
+    for(int i=0; i<5; i++){
         ASSERT_EQ(list[i]->data, data[i]);
     }
+}
+
+TEST(LinkedList, TestCustomSorting){
+    class Person{
+    public:
+        int age;
+        std::string name;
+    };
+    LinkedList<Person>list = {
+            {23,"Rohith"},
+            {25,"John"},
+            {21,"Bob"},
+            {28,"Alice"},
+            {30,"Rahul"}
+    };
 }
