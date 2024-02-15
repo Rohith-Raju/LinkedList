@@ -6,8 +6,10 @@
 
 int main(){
     {
-        LinkedList myList = {3, 2, 1};
+        LinkedList myList = {3, 2};
         myList.sort();
-        std::cout << myList.size();
+       for(auto it: myList){
+        std::cout<<*it;
+       }
     }
 }

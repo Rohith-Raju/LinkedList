@@ -7,6 +7,8 @@
 
 #include <initializer_list>
 #include <stdexcept>
+#include <vector>
+
 
 template <class T>
 class LinkedList {
@@ -23,7 +25,7 @@ private:
     LinkedList<T>::Node* middle(LinkedList<T>::Node* head);
     LinkedList<T> split(LinkedList<T>::Node*);
     template<class function>
-            LinkedList<T>& merge(LinkedList<T> list, function &&func);
+            LinkedList<T>& merge(LinkedList<T> &list, function &&func);
 
     template<class function>
             LinkedList<T>::Node* merge_sort(Node* left, Node* right, function &&func);
@@ -34,9 +36,14 @@ public:
     Node* head;
     Node* tail;
 
+    class forward_it;
+
     LinkedList();
     LinkedList(std::initializer_list<T>list);
     ~LinkedList();
+
+    forward_it begin();
+    forward_it end();
 
     void insert_first(Node* node);
     bool is_empty();
@@ -50,10 +57,43 @@ public:
     Node* at(size_t pos);
     size_t size();
     Node* operator[](size_t pos);
+
+    /* Forward Iterator */
+    class forward_it{
+    private:
+        Node* pointer;
+    public:
+        typedef forward_it __self;
+
+        forward_it(Node* ptr):pointer(ptr){}
+
+        /* Operator overloads */
+        __self& operator++(); // prefix
+        __self operator++(int); // postfix
+
+        /* Comparison operators */
+        bool operator==(__self other);
+        bool operator!=(__self other);
+
+        T* operator*();
+        T& operator&();
+    };
 };
 
 template <typename T>
 LinkedList<T>::LinkedList() : head(nullptr), tail(nullptr) {}
+
+template <typename T>
+typename LinkedList<T>::forward_it
+LinkedList<T>::begin() {
+    return forward_it(head);
+}
+
+template <typename T>
+typename LinkedList<T>::forward_it
+LinkedList<T>::end() {
+    return forward_it(nullptr);
+}
 
 template <typename T>
 LinkedList<T>::LinkedList(std::initializer_list<T>list):LinkedList(){
@@ -64,7 +104,7 @@ LinkedList<T>::LinkedList(std::initializer_list<T>list):LinkedList(){
 
 template <typename T>
 LinkedList<T>::~LinkedList() {
-   //clean();
+   clean();
 }
 
 template <typename T>
@@ -208,12 +248,15 @@ LinkedList<T>& LinkedList<T>::sort(function&& func) {
 template <typename T>
 template <class function>
 LinkedList<T>&
-LinkedList<T>::merge(LinkedList<T> list, function &&func) {
+LinkedList<T>::merge(LinkedList<T>&list, function &&func) {
     head = merge_sort(head, list.head, func);
     //set tail to the greatest of the two lists
-    if(!tail || (list.tail && func(tail->data,list.tail->data))){
+    if (!tail || (list.tail && func(tail->data, list.tail->data))) {
         tail = list.tail;
     }
+    //remove the original list addresses
+    list.head = nullptr;
+    list.tail = nullptr;
     return *this;
 }
 
@@ -256,4 +299,41 @@ LinkedList<T> LinkedList<T>::split(LinkedList<T>::Node * node) {
     }
     return temporary;
 }
+
+/* Iterator Operations */
+template <typename T>
+typename LinkedList<T>::forward_it
+LinkedList<T>::forward_it::operator++(int) {
+    __self temp = __self (this->pointer);
+    ++(*this);
+    return temp;
+}
+
+template <typename T>
+typename LinkedList<T>::forward_it&
+LinkedList<T>::forward_it::operator++() {
+    pointer = pointer->next;
+    return *this;
+}
+
+template <typename T>
+bool LinkedList<T>::forward_it::operator==( __self other) {
+    return pointer == other.pointer;
+}
+
+template <typename T>
+bool LinkedList<T>::forward_it::operator!=( __self other) {
+    return !(*this == other);
+}
+
+template <typename T>
+T& LinkedList<T>::forward_it::operator&() {
+    return this->pointer->data;
+}
+
+template <typename T>
+T* LinkedList<T>::forward_it::operator*() {
+    return &this->pointer->data;
+}
+
 #endif //CPPTEMPLATION_LINKEDLIST_H

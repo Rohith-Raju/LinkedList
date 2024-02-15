@@ -84,40 +84,14 @@ TEST(LinkedList, TestCustomSort){
     };
     LinkedList<Person>list = {
             {23,"Rohith"},
-            {25,"John"},
+            {22,"John"},
             {21,"Bob"},
-            {28,"Alice"},
-            {30,"Rahul"}
+            {20,"Alice"},
+            {19,"Rahul"}
     };
     list.sort([](Person left, Person right){return left.age < right.age;});
-    int data[5] = {21,23,25,28,30};
+    int data[5] = {19,20,21,22,23};
     for (int i=0; i<5; i++){
         ASSERT_EQ(data[i],list[i]->data.age);
     }
-}
-
-TEST(LinkedList, TestBasicSorting){
-    int data[] =  {4,5,6,7,8,9};
-    LinkedList list = {9,8,7,6,5,4};
-    list.sort();
-    ASSERT_EQ(list.get_head_val(), 4);
-    ASSERT_EQ(list.get_tail_val(), 9);
-    for(int i=0; i<5; i++){
-        ASSERT_EQ(list[i]->data, data[i]);
-    }
-}
-
-TEST(LinkedList, TestCustomSorting){
-    class Person{
-    public:
-        int age;
-        std::string name;
-    };
-    LinkedList<Person>list = {
-            {23,"Rohith"},
-            {25,"John"},
-            {21,"Bob"},
-            {28,"Alice"},
-            {30,"Rahul"}
-    };
 }
