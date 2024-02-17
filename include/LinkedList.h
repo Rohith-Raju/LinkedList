@@ -37,13 +37,18 @@ public:
     Node* tail;
 
     class forward_it;
+    class const_forward_it;
 
     LinkedList();
     LinkedList(std::initializer_list<T>list);
     ~LinkedList();
 
+    /* Iterators */
     forward_it begin();
+    const_forward_it begin() const;
+
     forward_it end();
+    const_forward_it end() const;
 
     void insert_first(Node* node);
     bool is_empty();
@@ -58,22 +63,30 @@ public:
     size_t size();
     Node* operator[](size_t pos);
 
-    /* Forward Iterator */
-    class forward_it{
-    private:
+    class const_forward_it{
+    protected:
         Node* pointer;
+    public:
+        typedef const_forward_it __self;
+
+        const_forward_it(Node* ptr = nullptr):pointer(ptr){}
+
+        /* Comparison operators */
+        bool operator==(__self other) const;
+        bool operator!=(__self other) const;
+    };
+
+
+    /* Forward Iterator */
+    class forward_it: public const_forward_it {
     public:
         typedef forward_it __self;
 
-        forward_it(Node* ptr):pointer(ptr){}
+        forward_it(Node* ptr = nullptr):const_forward_it(ptr){}
 
         /* Operator overloads */
         __self& operator++(); // prefix
         __self operator++(int); // postfix
-
-        /* Comparison operators */
-        bool operator==(__self other);
-        bool operator!=(__self other);
 
         T* operator*();
         T& operator&();
@@ -301,6 +314,17 @@ LinkedList<T> LinkedList<T>::split(LinkedList<T>::Node * node) {
 }
 
 /* Iterator Operations */
+
+template <typename T>
+bool LinkedList<T>::const_forward_it::operator==( __self other) const {
+    return this->pointer == other.pointer;
+}
+
+template <typename T>
+bool LinkedList<T>::const_forward_it::operator!=( __self other) const {
+    return !(*this == other);
+}
+
 template <typename T>
 typename LinkedList<T>::forward_it
 LinkedList<T>::forward_it::operator++(int) {
@@ -312,18 +336,8 @@ LinkedList<T>::forward_it::operator++(int) {
 template <typename T>
 typename LinkedList<T>::forward_it&
 LinkedList<T>::forward_it::operator++() {
-    pointer = pointer->next;
+    this->pointer = this->pointer->next;
     return *this;
-}
-
-template <typename T>
-bool LinkedList<T>::forward_it::operator==( __self other) {
-    return pointer == other.pointer;
-}
-
-template <typename T>
-bool LinkedList<T>::forward_it::operator!=( __self other) {
-    return !(*this == other);
 }
 
 template <typename T>

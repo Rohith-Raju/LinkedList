@@ -95,3 +95,18 @@ TEST(LinkedList, TestCustomSort){
         ASSERT_EQ(data[i],list[i]->data.age);
     }
 }
+
+TEST(LinkedList, TestIterator){
+    LinkedList myList = {1,2,3,4,6};
+    int checkArr[] = {1,2,3,4,6};
+    int index = 0;
+    for(auto i : myList){
+        ASSERT_EQ(checkArr[index],*i);
+        index++;
+    }
+}
+
+TEST(LinkedList, TestConstIterator){
+    LinkedList myList = {8,12, 1 ,8 ,5, 9, 10};
+     auto i = myList.begin();
+}
