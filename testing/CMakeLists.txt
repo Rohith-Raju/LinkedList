@@ -4,6 +4,6 @@ file(GLOB_RECURSE SOURCES Test*.cpp)
 
 add_subdirectory(lib)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-add_executable(Google_Tests_run ${SOURCES})
+add_executable(${CMAKE_PROJECT_NAME}_test ${SOURCES})
 
-target_link_libraries(Google_Tests_run gtest gtest_main)
+target_link_libraries(${CMAKE_PROJECT_NAME}_test gtest gtest_main)

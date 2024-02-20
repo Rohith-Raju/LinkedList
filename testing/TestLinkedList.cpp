@@ -107,6 +107,25 @@ TEST(LinkedList, TestIterator){
 }
 
 TEST(LinkedList, TestConstIterator){
-    LinkedList myList = {8,12, 1 ,8 ,5, 9, 10};
-     auto i = myList.begin();
+    LinkedList myList = {6,4,3,2,1};
+    myList.sort();
+    int checkArr[] = {1,2,3,4,6};
+    int index = 0;
+     for(auto const i :myList){
+         ASSERT_EQ(checkArr[index], *i);
+         index++;
+     }
+}
+
+TEST(LinkedList, TestReverse){
+    LinkedList myList = {1,2,3,4,5,6};
+    int checkArr[] = {6, 5, 4 ,3 ,2, 1};
+    myList.reverse();
+    ASSERT_EQ(myList.head->data, 6);
+    ASSERT_EQ(myList.tail->data, 1);
+    int index = 0;
+    for(auto i: myList){
+        ASSERT_EQ(checkArr[index], *i);
+        index++;
+    }
 }

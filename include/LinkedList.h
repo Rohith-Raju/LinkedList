@@ -50,6 +50,8 @@ public:
     forward_it end();
     const_forward_it end() const;
 
+    void reverse();
+
     void insert_first(Node* node);
     bool is_empty();
     void push_back(T data);
@@ -134,6 +136,20 @@ LinkedList<T>& LinkedList<T>::clean(){
 
     return *this;
 
+}
+
+template <typename T>
+void LinkedList<T>::reverse() {
+    Node* first_ptr = nullptr;
+    Node* second_ptr = head;
+    while(second_ptr != nullptr){
+        Node* temp = second_ptr->next;
+        second_ptr->next = first_ptr;
+        first_ptr = second_ptr;
+        second_ptr = temp;
+    }
+    tail = head;
+    head = first_ptr;
 }
 
 template <typename T>
