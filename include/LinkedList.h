@@ -63,6 +63,11 @@ public:
     T get_tail_val();
     Node* at(size_t pos);
     size_t size();
+
+    /* LinkedList operators */
+    bool operator==(LinkedList<T>& right);
+    bool operator!=(LinkedList<T>& right);
+
     Node* operator[](size_t pos);
 
     class const_forward_it{
@@ -90,8 +95,8 @@ public:
         __self& operator++(); // prefix
         __self operator++(int); // postfix
 
-        T* operator*();
-        T& operator&();
+        T& operator*();
+        T* operator->();
     };
 };
 
@@ -329,12 +334,33 @@ LinkedList<T> LinkedList<T>::split(LinkedList<T>::Node * node) {
     return temporary;
 }
 
+template <typename T>
+bool LinkedList<T>::operator==(LinkedList<T>& right) {
+
+    //Compare sizes first
+    if (size_counter != right.size_counter) return false;
+
+    auto left_it = begin();
+    auto right_it = right.begin();
+
+    while (left_it != end() && right_it != end()){
+        // all the elements should match
+        if(*(left_it++) != *(right_it++))
+            return false;
+    }
+    return true;
+}
+
+template <typename T>
+bool LinkedList<T>::operator!=(LinkedList<T>& right) {
+    !(*this == right);
+}
 /* Iterator Operations */
 
 template <typename T>
 bool LinkedList<T>::const_forward_it::operator==( __self other) const {
     return this->pointer == other.pointer;
-}
+}   
 
 template <typename T>
 bool LinkedList<T>::const_forward_it::operator!=( __self other) const {
@@ -357,12 +383,11 @@ LinkedList<T>::forward_it::operator++() {
 }
 
 template <typename T>
-T& LinkedList<T>::forward_it::operator&() {
+T& LinkedList<T>::forward_it::operator*() {
     return this->pointer->data;
 }
-
 template <typename T>
-T* LinkedList<T>::forward_it::operator*() {
+T* LinkedList<T>::forward_it::operator->() {
     return &this->pointer->data;
 }
 

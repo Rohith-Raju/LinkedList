@@ -101,7 +101,7 @@ TEST(LinkedList, TestIterator){
     int checkArr[] = {1,2,3,4,6};
     int index = 0;
     for(auto i : myList){
-        ASSERT_EQ(checkArr[index],*i);
+        ASSERT_EQ(checkArr[index], i);
         index++;
     }
 }
@@ -112,7 +112,7 @@ TEST(LinkedList, TestConstIterator){
     int checkArr[] = {1,2,3,4,6};
     int index = 0;
      for(auto const i :myList){
-         ASSERT_EQ(checkArr[index], *i);
+         ASSERT_EQ(checkArr[index], i);
          index++;
      }
 }
@@ -125,7 +125,14 @@ TEST(LinkedList, TestReverse){
     ASSERT_EQ(myList.tail->data, 1);
     int index = 0;
     for(auto i: myList){
-        ASSERT_EQ(checkArr[index], *i);
+        ASSERT_EQ(checkArr[index], i);
         index++;
     }
+}
+
+TEST(LinkedList, TestEquals){
+    LinkedList my_list_1 = {1, 2, 3, 4, 5};
+    LinkedList my_list_2 = {1, 2, 3, 4, 5};
+    bool result = my_list_1 == my_list_2 ? true : false;
+    ASSERT_TRUE(result);
 }
