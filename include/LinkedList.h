@@ -90,17 +90,31 @@ public:
     virtual bool operator!=(__self other);
 
     /* Operator overloads */
-    virtual __self &operator++();   // prefix
-    virtual __self operator++(int); // postfix
-    virtual T &operator*();
-    virtual T *operator->();
+    __self &operator++();   // prefix
+    __self operator++(int); // postfix
+    T &operator*();
+    T *operator->();
   };
 
   class reverse_it : public forward_it {
+  private:
+    LinkedList<T> *list = nullptr;
+
   public:
     typedef reverse_it __self;
 
-    reverse_it(Node *ptr) : forward_it(ptr) {}
+    reverse_it(LinkedList<T> *list) : forward_it(list->head) {
+      this->list = list;
+    }
+
+    reverse_it() : forward_it(nullptr) {}
+
+    ~reverse_it() {
+      if (list != nullptr) {
+        list->clean();
+        delete list;
+      }
+    }
   };
 };
 
@@ -117,11 +131,11 @@ template <typename T>
 typename LinkedList<T>::reverse_it LinkedList<T>::rbegin() {
   LinkedList<T> *temp = new LinkedList<T>(*this);
   temp->reverse();
-  return reverse_it(temp->head);
+  return reverse_it(temp);
 }
 
 template <typename T> typename LinkedList<T>::reverse_it LinkedList<T>::rend() {
-  return reverse_it(nullptr);
+  return reverse_it();
 }
 
 template <typename T>
