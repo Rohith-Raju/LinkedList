@@ -27,12 +27,28 @@ TEST(LinkedList, TestNonPrimitiveInit) {
   }
 }
 
+TEST(LinkedList, TestCopyConstructor) {
+  LinkedList<int> list1 = {1, 2, 3, 4, 5};
+  LinkedList<int> list2(list1);
+  bool result = list1 == list2 ? true : false;
+  ASSERT_TRUE(result);
+}
+
 TEST(LinkedList, TestHeadTail) {
   LinkedList list = {"first", "second", "Third", "fourth", "fifth"};
   std::string head = list.get_head_val();
   std::string tail = list.get_tail_val();
   ASSERT_EQ(head, "first");
   ASSERT_EQ(tail, "fifth");
+}
+
+TEST(LinkedList, TestMoveConstructor) {
+  LinkedList<int> list = {1, 2, 3, 4, 5};
+  LinkedList<int> list2((LinkedList<int> &&)list);
+  ASSERT_EQ(list2.get_head_val(), 1);
+  ASSERT_EQ(list2.get_tail_val(), 5);
+  ASSERT_EQ(list.head, nullptr);
+  ASSERT_EQ(list.tail, nullptr);
 }
 
 TEST(LinkedList, TestCleanUp) {
@@ -94,6 +110,16 @@ TEST(LinkedList, TestIterator) {
   }
 }
 
+TEST(LinkedList, TestReverseIterator) {
+  LinkedList myList = {1, 2, 3, 4, 5};
+  int checkArr[] = {5, 4, 3, 2, 1};
+  int index = 0;
+  for (auto it = myList.rbegin(); it != myList.rend(); it++) {
+    ASSERT_EQ(checkArr[index], *it);
+    index++;
+  }
+}
+
 TEST(LinkedList, TestReverse) {
   LinkedList myList = {1, 2, 3, 4, 5, 6};
   int checkArr[] = {6, 5, 4, 3, 2, 1};
@@ -110,6 +136,9 @@ TEST(LinkedList, TestReverse) {
 TEST(LinkedList, TestEquals) {
   LinkedList my_list_1 = {1, 2, 3, 4, 5};
   LinkedList my_list_2 = {1, 2, 3, 4, 5};
+  LinkedList my_list_3 = {1, 2, 2, 3, 4};
   bool result = my_list_1 == my_list_2 ? true : false;
+  bool result2 = my_list_1 == my_list_3 ? true : false;
   ASSERT_TRUE(result);
+  ASSERT_FALSE(result2);
 }

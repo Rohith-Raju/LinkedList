@@ -34,11 +34,7 @@ public:
   Node *tail;
 
   class forward_it;
-  class const_forward_it;
-
-  // reverse iterators
   class reverse_it;
-  class const_reverse_it;
 
   // Default constructor
   LinkedList();
@@ -56,10 +52,10 @@ public:
 
   /* Iterators */
   forward_it begin();
-  const_forward_it begin() const;
-
   forward_it end();
-  const_forward_it end() const;
+
+  reverse_it rbegin();
+  reverse_it rend();
 
   void reverse();
 
@@ -90,14 +86,21 @@ public:
     forward_it(Node *ptr = nullptr) : pointer(ptr) {}
 
     /* Comparison operators */
-    bool operator==(__self other);
-    bool operator!=(__self other);
+    virtual bool operator==(__self other);
+    virtual bool operator!=(__self other);
 
     /* Operator overloads */
-    __self &operator++();   // prefix
-    __self operator++(int); // postfix
-    T &operator*();
-    T *operator->();
+    virtual __self &operator++();   // prefix
+    virtual __self operator++(int); // postfix
+    virtual T &operator*();
+    virtual T *operator->();
+  };
+
+  class reverse_it : public forward_it {
+  public:
+    typedef reverse_it __self;
+
+    reverse_it(Node *ptr) : forward_it(ptr) {}
   };
 };
 
@@ -111,6 +114,17 @@ template <typename T> typename LinkedList<T>::forward_it LinkedList<T>::end() {
 }
 
 template <typename T>
+typename LinkedList<T>::reverse_it LinkedList<T>::rbegin() {
+  LinkedList<T> *temp = new LinkedList<T>(*this);
+  temp->reverse();
+  return reverse_it(temp->head);
+}
+
+template <typename T> typename LinkedList<T>::reverse_it LinkedList<T>::rend() {
+  return reverse_it(nullptr);
+}
+
+template <typename T>
 LinkedList<T>::LinkedList() : head(nullptr), tail(nullptr) {}
 
 template <typename T>
@@ -120,7 +134,22 @@ LinkedList<T>::LinkedList(std::initializer_list<T> list) : LinkedList() {
   }
 }
 
-template <typename T> LinkedList<T>::LinkedList(LinkedList &other) {}
+template <typename T>
+LinkedList<T>::LinkedList(LinkedList &other) : LinkedList() {
+  for (T element : other) {
+    push_back(element);
+  }
+}
+
+template <typename T>
+LinkedList<T>::LinkedList(LinkedList &&other) : LinkedList() {
+  for (T element : other) {
+    push_back(element);
+  }
+  other.clean();
+  other.head = nullptr;
+  other.tail = nullptr;
+}
 
 template <typename T> LinkedList<T>::~LinkedList() { clean(); }
 

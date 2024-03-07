@@ -5,11 +5,8 @@
 #include "iostream"
 
 int main() {
-  {
-    LinkedList myList = {3, 2};
-    myList.sort();
-    for (auto it : myList) {
-      std::cout << it;
-    }
+  LinkedList<int> list = {1, 2, 3, 4, 5};
+  for (auto it = list.rbegin(); it != list.rend(); it++) {
+    std::cout << *it;
   }
 }
