@@ -82,7 +82,13 @@ TEST(LinkedList, TestDeleteAtPosition) {
   ASSERT_EQ(ptr->data, 3);
   list.delete_at(2);
   ASSERT_NE(ptr->data, 3);
-  // todo: write SIGSEGV test case
+}
+
+TEST(LinkedList, TestDeleteAtEnd) {
+  LinkedList list = {1, 2, 3, 4, 5};
+  ASSERT_EQ(list.get_tail_val(), 5);
+  list.delete_at(4);
+  ASSERT_EQ(list.get_tail_val(), 4);
 }
 
 TEST(LinkedList, TestCustomSort) {

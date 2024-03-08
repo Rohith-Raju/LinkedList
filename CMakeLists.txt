@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.27)
 
-project(CppTemplation)
+project(LinkedList)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -11,4 +11,4 @@ include_directories(include)
 add_subdirectory(testing)
 
 # Sources
-add_executable(CppTemplation main.cpp)
+add_executable(LinkedList main.cpp)

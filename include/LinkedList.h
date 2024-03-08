@@ -19,15 +19,6 @@ private:
     };
   };
   size_t size_counter = 0;
-  LinkedList<T>::Node *middle(LinkedList<T>::Node *head);
-  LinkedList<T> split(LinkedList<T>::Node *);
-  template <class function>
-  LinkedList<T> &merge(LinkedList<T> &list, function &&func);
-
-  template <class function>
-  LinkedList<T>::Node *merge_sort(Node *left, Node *right, function &&func);
-  void deep_clean(Node *&list);
-  LinkedList<T> &clean();
 
 public:
   Node *head;
@@ -35,6 +26,15 @@ public:
 
   class forward_it;
   class reverse_it;
+
+  /* Type definations */
+  typedef LinkedList<T> __self;
+  typedef typename LinkedList<T>::Node node_type;
+  typedef T value_type;
+  typedef T &refernece;
+  typedef T *pointer;
+  typedef forward_it iterator;
+  typedef reverse_it reverse_iterator;
 
   // Default constructor
   LinkedList();
@@ -48,32 +48,48 @@ public:
   // Move constructor
   LinkedList(LinkedList &&other);
 
+  // Destructor
   ~LinkedList();
 
   /* Iterators */
-  forward_it begin();
-  forward_it end();
+  iterator begin();
+  iterator end();
 
-  reverse_it rbegin();
-  reverse_it rend();
+  reverse_iterator rbegin();
+  reverse_iterator rend();
 
+  /* Mutator methods */
   void reverse();
-
   void insert_first(Node *node);
-  bool is_empty();
   void push_back(T data);
-  LinkedList<T> &sort();
-  template <class function> LinkedList<T> &sort(function &&func);
-  bool delete_at(size_t pos);
+
+  /* Getters */
   T get_head_val();
   T get_tail_val();
   Node *at(size_t pos);
   size_t size();
 
-  /* LinkedList operators */
+  /* Merge sort and helper */
+  LinkedList<T> &sort();
+  template <class function> LinkedList<T> &sort(function &&func);
+
+  LinkedList<T>::Node *middle(LinkedList<T>::Node *head);
+  LinkedList<T> split(LinkedList<T>::Node *);
+  template <class function>
+  LinkedList<T> &merge(LinkedList<T> &list, function &&func);
+
+  template <class function>
+  LinkedList<T>::Node *merge_sort(Node *left, Node *right, function &&func);
+  void deep_clean(Node *&list);
+  LinkedList<T> &clean();
+
+  /* Genaral purpose  */
+  bool is_empty();
+  bool delete_at(size_t pos);
+
+  /* LinkedList operator overloads */
   bool operator==(LinkedList<T> &right);
   bool operator!=(LinkedList<T> &right);
-
   Node *operator[](size_t pos);
 
   class forward_it {
@@ -118,25 +134,29 @@ public:
   };
 };
 
-template <typename T>
-typename LinkedList<T>::forward_it LinkedList<T>::begin() {
-  return forward_it(head);
+/* LinkedList implementation starts from here */
+
+template <typename T> typename LinkedList<T>::iterator LinkedList<T>::begin() {
+  return iterator(head);
 }
 
-template <typename T> typename LinkedList<T>::forward_it LinkedList<T>::end() {
-  return forward_it(nullptr);
+template <typename T> typename LinkedList<T>::iterator LinkedList<T>::end() {
+  return iterator(nullptr);
 }
 
 template <typename T>
-typename LinkedList<T>::reverse_it LinkedList<T>::rbegin() {
+typename LinkedList<T>::reverse_iterator LinkedList<T>::rbegin() {
   LinkedList<T> *temp = new LinkedList<T>(*this);
   temp->reverse();
-  return reverse_it(temp);
+  return reverse_iterator(temp);
 }
 
-template <typename T> typename LinkedList<T>::reverse_it LinkedList<T>::rend() {
+template <typename T>
+typename LinkedList<T>::reverse_iterator LinkedList<T>::rend() {
   return reverse_it();
 }
+
+/******** Constructors *************/
 
 template <typename T>
 LinkedList<T>::LinkedList() : head(nullptr), tail(nullptr) {}
@@ -180,6 +200,11 @@ template <typename T> LinkedList<T> &LinkedList<T>::clean() {
   return *this;
 }
 
+/*
+ * reverse() reverses all the elements where head = prev_tail
+ * and  tail = prev_head
+ */
+
 template <typename T> void LinkedList<T>::reverse() {
   Node *first_ptr = nullptr;
   Node *second_ptr = head;
@@ -193,6 +218,9 @@ template <typename T> void LinkedList<T>::reverse() {
   head = first_ptr;
 }
 
+/*
+ * deep_clean() drills into the entire list and removes all the elements
+ */
 template <typename T> void LinkedList<T>::deep_clean(Node *&list) {
   if (list != tail) {
     deep_clean(list->next);
@@ -203,17 +231,28 @@ template <typename T> void LinkedList<T>::deep_clean(Node *&list) {
   return;
 }
 
+/*
+ * insert_first() inserts element only when there are no elements in the list
+ */
 template <typename T> void LinkedList<T>::insert_first(Node *node) {
-  head = node;
-  size_counter = 1;
-  if (tail == nullptr) {
-    tail = head;
+  if (!is_empty()) {
+    head = node;
+    size_counter = 1;
+    if (tail == nullptr) {
+      tail = head;
+    }
   }
   return;
 }
 
+/*
+ * is_empty() returns true if the list is empty
+ */
 template <typename T> bool LinkedList<T>::is_empty() { return head == nullptr; }
 
+/*
+ * push_back() append new element to the end of the list
+ */
 template <typename T> void LinkedList<T>::push_back(T data) {
   Node *node = new Node(data);
   if (is_empty()) {
@@ -224,9 +263,14 @@ template <typename T> void LinkedList<T>::push_back(T data) {
   tail->next = node;
   tail = node;
 }
-
+/*
+ * size() returns the size of the list
+ */
 template <typename T> size_t LinkedList<T>::size() { return size_counter; }
 
+/*
+ * at() returns the node containing the data at a given position
+ */
 template <typename T>
 typename LinkedList<T>::Node *LinkedList<T>::at(size_t pos) {
   if (pos >= size())
@@ -244,6 +288,9 @@ typename LinkedList<T>::Node *LinkedList<T>::operator[](size_t pos) {
   return at(pos);
 }
 
+/*
+ * delete_at() remove element in the given pos
+ */
 template <typename T> bool LinkedList<T>::delete_at(size_t pos) {
   if (pos >= size()) {
     throw std::out_of_range("Cannot delete. Index out of bounds");
@@ -279,12 +326,26 @@ template <typename T> bool LinkedList<T>::delete_at(size_t pos) {
   }
 }
 
+/*
+ * get_head_val() return the value of head
+ */
 template <typename T> T LinkedList<T>::get_head_val() { return head->data; }
 
+/*
+ * get_tail_val() return the value of tail
+ */
 template <typename T> T LinkedList<T>::get_tail_val() { return tail->data; }
+
+/*
+ * sort() sorts all the elements in the list (default accending)
+ */
 template <typename T> LinkedList<T> &LinkedList<T>::sort() {
   return sort([](T leftVal, T rightVal) { return leftVal < rightVal; });
 }
+
+/*
+ * sort() sorts all the elements in the list by passing in a anonymous function
+ */
 
 template <typename T>
 template <class function>
