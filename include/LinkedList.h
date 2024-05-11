@@ -235,12 +235,10 @@ template <typename T> void LinkedList<T>::deep_clean(Node *&list) {
  * insert_first() inserts element only when there are no elements in the list
  */
 template <typename T> void LinkedList<T>::insert_first(Node *node) {
-  if (!is_empty()) {
-    head = node;
-    size_counter = 1;
-    if (tail == nullptr) {
-      tail = head;
-    }
+  head = node;
+  size_counter = 1;
+  if (tail == nullptr) {
+    tail = head;
   }
   return;
 }
