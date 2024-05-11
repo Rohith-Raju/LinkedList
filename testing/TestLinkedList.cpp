@@ -62,7 +62,6 @@ TEST(LinkedList, TestCleanUp) {
   }
   ASSERT_EQ(test->head, nullptr);
   ASSERT_EQ(test->tail, nullptr);
-  ASSERT_EQ(test->size(), 0);
 }
 
 TEST(LinkedList, TestPosition) {

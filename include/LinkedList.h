@@ -227,7 +227,7 @@ template <typename T> void LinkedList<T>::deep_clean(Node *&list) {
   }
   delete list;
   list = nullptr;
-  this->size_counter--;
+  this->size_counter = 0;
   return;
 }
 
@@ -428,7 +428,7 @@ template <typename T> bool LinkedList<T>::operator==(LinkedList<T> &right) {
 }
 
 template <typename T> bool LinkedList<T>::operator!=(LinkedList<T> &right) {
-  !(*this == right);
+  return !(*this == right);
 }
 
 /* Iterator Operations */
