@@ -3,7 +3,7 @@ This project consits of templated version of linear linked list that mimics the 
 This project was done to learn, understand and practice concepts specifically tied to C++. 
 
 ## Prequisite
-This project uses C++17 and cmake version 3.27. 
+This project uses C++17 and cmake version 3.27 
 
 ## Usage 
 ```c++
